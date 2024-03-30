@@ -1,0 +1,161 @@
+HOTEL MANAGEMENT SYSTEM TERMINAL OUTPUT:
+
+ ==================================
+|                                  |
+|   WELCOME TO THE LOGIN SYSTEM    | 
+|                                  |
+ ==================================
+
+Enter StaffID:
+Enter Password:
+
+// IF TRUE        / ELSE
+Login successful! / Invalid ID or Password. Please try again.
+	
+	// IF RECEPTIONIST LOGGED
+	 ==============================================
+	|                                  	       |
+	|   WELCOME RECEPTIONIST SOMETHING SOMETHING   | 
+	|                                 	       |
+	 ==============================================
+	
+	// Checkin/out
+	Customer Action
+	[1] Check In
+	[2] Check Out
+	[3] Modify Records
+	[4] Exit
+
+		 ==============
+		|              |
+		|   CHECK IN   | 
+		|              |
+		 ==============
+
+		// IF "Check in"
+		[1] Book a Customer 
+		[2] Extend Booking
+		[3] Return to Customer Action
+
+
+			 ==============
+			|              |
+			|   BOOOKING   | 
+			|              |
+		 	 ==============
+
+			// IF "Book a customer"
+			======================
+			GUEST INFORMATION:
+			Guest Name:
+			Sex: 
+			Birthday:
+			Age:
+			Contact No.:
+			======================
+			
+
+			// IF "Extend Booking"
+			======================
+			Enter Customer ID:
+			Current Booking Details:
+			New Check-Out Date:
+			======================
+			Booking Extended Successfully!
+
+			// IF "Return to Customer Action"
+			Returning to Customer Action menu...
+
+		// IF "Check Out"
+		[2] Check Out
+			======================
+			Enter Customer ID:
+			Check-Out Successful!
+			======================
+
+		// IF "Modify Records"
+		[3] Modify Records
+			================================
+			|                                |
+			|   MODIFICATION MENU SOMETHING  | 
+			|                                |
+		 	================================
+			[1] Update Customer Information
+			[2] Update Room Information
+			[3] Return to Customer Action
+
+			// IF "Update Customer Information"
+			Enter Customer ID:
+			// Display Customer Information
+			Which information would you like to update?
+			[1] Guest Name
+			[2] Sex
+			[3] Birthday
+			[4] Age
+			[5] Contact No.
+			[6] Return to Modification Menu
+			Updated Successfully!
+
+			// IF "Update Room Information"
+			Enter Room Number:
+			// Display Room Information
+			Which information would you like to update?
+			[1] Room Type
+			[2] Availability
+			[3] Return to Modification Menu
+			Updated Successfully!
+
+			// IF "Return to Customer Action"
+			Returning to Customer Action menu...
+
+		// IF "Exit"
+		[4] Exit
+			Exiting...
+
+	// IF MANAGER LOGGED
+	 ============================================
+	|                                 	       |
+	|   WELCOME MANAGER SOMETHING SOMETHING    | 
+	|                                 	       |
+	 ============================================
+	
+	// Checkin/out
+	Customer Action
+	[1] Check In
+	[2] Check Out
+	[3] Modify Records
+	[4] Add Rooms
+	[5] Exit
+
+		// IF "Add Rooms"
+		============================================
+		|                                           |
+		|   ROOM MANAGEMENT - ADD/REMOVE ROOMS      | 
+		|                                           |
+		============================================
+		[1] Add Room
+		[2] Remove Room
+		[3] Return to Customer Action
+
+			// IF "Add Room"
+			================================
+			Enter Room Details:
+			Room Number:
+			Room Type:
+			Availability:
+			Room Added Successfully!
+
+			// IF "Remove Room"
+			================================
+			Enter Room Number:
+			Room Removed Successfully!
+
+			// IF "Return to Customer Action"
+			Returning to Customer Action menu...
+
+		// IF "Exit"
+		[5] Exit
+			Exiting...
+
+			
+			
