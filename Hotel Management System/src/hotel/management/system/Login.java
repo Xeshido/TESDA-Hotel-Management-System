@@ -11,8 +11,15 @@ public class Login {
             // Welcome screen
             System.out.println(" ==================================");
             System.out.println("|                                  |");
-            System.out.println("|   WELCOME TO THE LOGIN SYSTEM    |");
+            System.out.println("|      ReservEASE: The Suite       |");
+            System.out.println("|        Solution for Hotel        |");
+            System.out.println("|            Booking               |");
             System.out.println("|                                  |");
+            System.out.println("|                                  |");
+            System.out.println("|          PLEASE LOG IN           |");
+            System.out.println("|               ||                 |");
+            System.out.println("|               ||                 |");
+            System.out.println("|               ++                 |");
             System.out.println(" ==================================");
 
             // User input for StaffID and Password

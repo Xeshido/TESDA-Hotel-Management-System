@@ -6,6 +6,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 public abstract class DBConnection {
     
@@ -27,11 +28,29 @@ public abstract class DBConnection {
         }
     }
     
+    public void disconnect() {
+        try {
+            if (result != null) {
+                result.close();
+            }
+            if (state != null) {
+                state.close();
+            }
+            if (con != null) {
+                con.close();
+            }
+        } catch (SQLException e) {
+            System.out.println("Error while disconnecting: " + e.getMessage());
+        }
+    }
+    
     public static void main(String[] args) {
         Main main  = new Main();
         main.connect();
-    }
-    
-    
-    
+        // Perform database operations
+        
+        // Don't forget to disconnect when finished
+        main.disconnect();
+    }   
+  
 }

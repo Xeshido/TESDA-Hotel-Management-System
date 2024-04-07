@@ -1,6 +1,8 @@
 
 package hotel.management.system;
 
+
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -19,20 +21,22 @@ public class ManagerMenu extends DBConnection implements Menu {
     public void displayMenu() {
         System.out.println(" ==============================================");
         System.out.println("|                                              |");
-        System.out.println("|   WELCOME MANAGER SOMETHING SOMETHING   |");
+        System.out.println("|          WELCOME MANAGER MABUHAY!            |");
         System.out.println("|                                              |");
         System.out.println(" ==============================================");
         Login screen = new Login();
         boolean exit = false;
         while (!exit) {
-            System.out.println("\nCustomer Action");
+            System.out.println("What would you like to do?: ");
             System.out.println("[1] Check In");
             System.out.println("[2] Check Out");
-            System.out.println("[3] Modify Records");
-            System.out.println("[4] Add Rooms");
-            System.out.println("[5] Remove Rooms");
-            System.out.println("[6] Return to Login");
-            System.out.println("[7] Exit");
+            System.out.println("[3] Add Services and Rooms");
+            System.out.println("[4] Remove Services and Rooms");
+            System.out.println("[5] Register Guests");
+            System.out.println("[6] Unregister");
+            System.out.println("[7] Modify Records");
+            System.out.println("[8] Log Out");
+            System.out.println("[9] Exit");
             System.out.print(">> ");
             int choice = scanner.nextInt();
             scanner.nextLine(); // Consume newline character
@@ -45,24 +49,31 @@ public class ManagerMenu extends DBConnection implements Menu {
                     checkOut();
                     break;
                 case 3:
-                    modifyRecords();
+                    addServiceAndAssociateToRoom();
                     break;
                 case 4:
-                    addRooms();
-                    break;
-                case 5:
+                    removeServices();
                     removeRooms();
                     break;
+                case 5:
+                    registerGuest();
+                    break;
                 case 6:
+                    unregisterGuest();
+                    break;
+                case 7:
+                    modifyRecords();
+                    break;
+                case 8:
                     System.out.println("Returning to Login Screen...");
                     screen.loginID();
                     break;
-                case 7:
+                case 9:
                     exit = true;
                     System.out.println("System Exiting....");
                     break;
                 default:
-                    System.out.println("Invalid choice. Please enter a number between 1 and 7.");
+                    System.out.println("Invalid choice. Please enter a number between 1 and 8.");
             }
         }
     }
@@ -75,8 +86,7 @@ public class ManagerMenu extends DBConnection implements Menu {
         boolean returnToMenu = false;
         while (!returnToMenu) {
             System.out.println("[1] Book a Customer");
-            System.out.println("[2] Extend Booking");
-            System.out.println("[3] Return to Customer Action");
+            System.out.println("[2] Return to Customer Action");
             System.out.print(">> ");
             int choice = scanner.nextInt();
             scanner.nextLine(); // Consume newline character
@@ -86,14 +96,11 @@ public class ManagerMenu extends DBConnection implements Menu {
                     bookCustomer();
                     break;
                 case 2:
-                    //extendBooking();
-                    break;
-                case 3:
                     returnToMenu = true;
                     System.out.println("Returning to Customer Action menu...");
                     break;
                 default:
-                    System.out.println("Invalid choice. Please enter a number between 1 and 3.");
+                    System.out.println("Invalid choice. Please enter a number between 1 and 2.");
             }
         }
     }
@@ -139,8 +146,7 @@ public class ManagerMenu extends DBConnection implements Menu {
         } catch (SQLException e){
             System.out.println(e);
         }
-        
-        
+        displayCustomer();  
     }
 
     private void checkOut() {
@@ -193,12 +199,13 @@ public class ManagerMenu extends DBConnection implements Menu {
         } catch (SQLException e){
             e.printStackTrace(); //prints stack trace for better diagnosis of error
         }
+        displayCustomer();
     }
 
     private void modifyRecords() {
         System.out.println(" ================================");
         System.out.println("|                                |");
-        System.out.println("|   MODIFICATION MENU SOMETHING  |");
+        System.out.println("|         GUEST RECORDS          |");
         System.out.println("|                                |");
         System.out.println(" ================================");
         
@@ -218,7 +225,10 @@ public class ManagerMenu extends DBConnection implements Menu {
                     updateCustomerInformation();
                     break;
                 case 2:
-                    displayHotel();
+                    displayCustomer();
+                    displayRoomUsingInnerJoin();
+                    displayServicesUsingInnerJoin();
+                    displayRegistrationUsingInnerJoin();
                     break;
                 case 3:
                     returnToMenu = true;
@@ -232,7 +242,7 @@ public class ManagerMenu extends DBConnection implements Menu {
 
     private void updateCustomerInformation() {
     System.out.println(" ===============================");
-    System.out.println("|   UPDATE CUSTOMER INFORMATION |");
+    System.out.println("|  UPDATE CUSTOMER INFORMATION  |");
     System.out.println(" ===============================");
 
     try {
@@ -291,7 +301,7 @@ public class ManagerMenu extends DBConnection implements Menu {
     }
 }
 
-    public void displayHotel() {
+    public void displayCustomer() {
         String query = "SELECT * FROM tbl_customer";
 
         try {
@@ -327,13 +337,13 @@ public class ManagerMenu extends DBConnection implements Menu {
             state = con.createStatement();
             result = state.executeQuery(query);
             System.out.println("");
-            System.out.println("");
-            System.out.println("Room ID\t\tRoom Type\t\tRoom Status\t\t");
+            System.out.println("Room ID\t\tRoom Type\t\tRoom Status\t\tServiceID");
             System.out.println("----------------------------------------------------------------------------------------------------------------------");
             while (result.next()) {
                 int roomId = result.getInt("RoomID");
                 String roomType = result.getString("RoomType");
                 String roomStatus = result.getString("RoomStatus");
+                int serviceID = result.getInt("ServiceID");
                 
 
                 int roomTypeSpaces = 20 - roomType.length();
@@ -349,7 +359,7 @@ public class ManagerMenu extends DBConnection implements Menu {
                 }
 
                 System.out.println(roomId + "\t\t" + roomType + roomTypeSpacesBuilder.toString()
-                        + roomStatus + roomStatusSpacesBuilder.toString());
+                        + roomStatus + roomStatusSpacesBuilder.toString() + serviceID);
             }
         } catch (SQLException e) {
             System.out.println("Error retrieving room data: " + e.getMessage());
@@ -358,7 +368,7 @@ public class ManagerMenu extends DBConnection implements Menu {
     
     private void addRooms() {
         System.out.println(" ======================");
-        System.out.println("|     ADD ROOMS        |");
+        System.out.println("|      ADD ROOMS       |");
         System.out.println(" ======================");
 
         try {
@@ -376,7 +386,6 @@ public class ManagerMenu extends DBConnection implements Menu {
 
             String RoomType = "";
             String RoomStatus = "Available"; // Assuming new rooms are available
-            int ServiceID = 0;
             switch (roomTypeChoice) {
                 case 1:
                     RoomType = "Deluxe";
@@ -400,10 +409,15 @@ public class ManagerMenu extends DBConnection implements Menu {
             
             
         // Prepare the INSERT statement
-        String query = "INSERT INTO `tbl_rooms` (`RoomType`, `RoomStatus`) VALUES (?, ?)";
+        System.out.print("Designate a ServiceID for this: ");
+        int ServiceID = scanner.nextInt();
+        scanner.nextLine(); // Consume newline character
+        
+        String query = "INSERT INTO `tbl_rooms` (`RoomType`, `RoomStatus`, ServiceID) VALUES (?, ?, ?)";
         prep = con.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS); // Specify RETURN_GENERATED_KEYS
         prep.setString(1, RoomType);
         prep.setString(2, RoomStatus);
+        prep.setInt(3, ServiceID);
 
         // Execute the query
         prep.executeUpdate();
@@ -421,7 +435,7 @@ public class ManagerMenu extends DBConnection implements Menu {
         } catch (SQLException e) {
             System.err.println("Error adding room: " + e.getMessage());
         }
-        addServiceAndAssociateToRoom();
+        
     }
 
     public void displayServicesUsingInnerJoin() {
@@ -433,7 +447,6 @@ public class ManagerMenu extends DBConnection implements Menu {
             state = con.createStatement();
             result = state.executeQuery(query);
             System.out.println("");
-            System.out.println("");
             System.out.println("Service ID\tService Type");
             System.out.println("----------------------------------------------------------------------------------------------------------------------");
             while (result.next()) {
@@ -441,17 +454,24 @@ public class ManagerMenu extends DBConnection implements Menu {
                 String serviceType = result.getString("ServiceType");
 
                 System.out.println(ServiceId + "\t\t" + serviceType);
+                
             }
         } catch (SQLException e) {
             System.err.println("Error retrieving service data: " + e.getMessage());
+            System.out.println("");
         }
         
     }
     
     private void addServiceAndAssociateToRoom() {
         System.out.println(" ======================");
-        System.out.println("|     ADD SERVICE       |");
+        System.out.println("|      ADD SERVICE     |");
         System.out.println(" ======================");
+        
+        System.out.print("Enter Service ID: ");
+        int ServiceID = scanner.nextInt();
+        scanner.nextLine(); // Consume newline character
+        
         // Display available services and let the user choose one
         System.out.println("Select Service Type:");
         System.out.println("[1] Dining");
@@ -485,68 +505,201 @@ public class ManagerMenu extends DBConnection implements Menu {
             connect();
 
             // Prepare the INSERT statement for services
-            String insertServiceQuery = "INSERT INTO tbl_services (ServiceType) VALUES (?)";
-            prep = con.prepareStatement(insertServiceQuery, new String[]{"ServiceID"}); // Specify the column name for generated keys
-            prep.setString(1, ServiceType);
-            prep.setString(1, ServiceType);
+            String insertServiceQuery = "INSERT INTO tbl_services (ServiceID, ServiceType) VALUES (?, ?)";
+            prep = con.prepareStatement(insertServiceQuery);
+            prep.setInt(1, ServiceID);
+            prep.setString(2, ServiceType);
             int rowsAffected = prep.executeUpdate();
 
             if (rowsAffected > 0) {
-                ResultSet generatedKeys = prep.getGeneratedKeys();
-                if (generatedKeys.next()) {
-                    int ServiceID = generatedKeys.getInt(1);
-                    System.out.println("Service " + ServiceType + " (ID: " + ServiceID + ") added successfully.");
-
-                    // Associate the service with a room
-                    System.out.print("Enter RoomID to associate with the service: ");
-                    int RoomID = scanner.nextInt();
-                    scanner.nextLine(); // Consume newline character
-
-                    String updateRoomQuery = "UPDATE `tbl_rooms` SET `ServiceID` = ? WHERE `RoomID` = ?";
-                    prep = con.prepareStatement(updateRoomQuery);
-                    prep.setInt(1, ServiceID);
-                    prep.setInt(2, RoomID);
-
-                    int rowsUpdated = prep.executeUpdate();
-                    if (rowsUpdated > 0) {
-                        System.out.println("Service associated with the room successfully.");
-                    } else {
-                        System.out.println("Failed to associate service with the room.");
-                    }
-                } else {
-                    System.out.println("Failed to retrieve ServiceID for " + ServiceType);
-                }
+                System.out.println("Service " + ServiceType + " (ID: " + ServiceID + ") added successfully.");
             }
 
             con.close();
             displayServicesUsingInnerJoin(); // Display updated services
-        } catch (SQLException e) {
-            System.err.println("Error adding service and associating with the room: " + e.getMessage());
+            } catch (SQLException e) {
+                System.err.println("Error adding service and associating with the room: " + e.getMessage());
+            }
+            addRooms();
         }
+    
+    
+    private java.sql.Date calculateCheckOutDate(java.sql.Date checkInDate, int periodOfStay) {
+        java.sql.Date checkOutDate = null;
+        try {
+            // Calculate CheckOutDate by adding periodOfStay days to CheckInDate
+            long checkInTime = checkInDate.getTime();
+            long periodInMillis = periodOfStay * 24L * 60 * 60 * 1000; // Convert days to milliseconds
+            long checkOutTime = checkInTime + periodInMillis;
+
+            // Instantiate a new java.sql.Date object for CheckOutDate
+            checkOutDate = new java.sql.Date(checkOutTime);
+        } catch (IllegalArgumentException e) {
+            System.err.println("Invalid date format: " + e.getMessage());
+        }
+        return checkOutDate;
     }
 
-    private void removeRooms() {
-    System.out.print("Enter RoomID to check out: ");
-        int RoomID = scanner.nextInt();
+    private void removeServices() {
+        System.out.print("Enter ServiceID to remove service: ");
+        int serviceID = scanner.nextInt();
         scanner.nextLine(); //Consume newline character
-        
-        String query = "DELETE FROM tbl_rooms WHERE RoomID = ?";
+
+        String query = "DELETE FROM tbl_services WHERE ServiceID = ?";
         try {
             connect();
             prep = con.prepareStatement(query);
-            prep.setInt(1, RoomID);
-            
+            prep.setInt(1, serviceID);
+
             int rowsDeleted = prep.executeUpdate();
             if (rowsDeleted > 0){
-                System.out.println("Remove room successful for RoomID: " + RoomID);
+                System.out.println("Remove service successful for ServiceID: " + serviceID);
             } else {
-                System.out.println("RoomID: " + RoomID + " not found.");
+                System.out.println("ServiceID: " + serviceID + " not found.");
             }
-            
+
             con.close();
         } catch (SQLException e){
             e.printStackTrace(); //prints stack trace for better diagnosis of error
         }
+        displayServicesUsingInnerJoin();
     }
+
+    private void removeRooms() {
+        System.out.print("Enter RoomID to remove room: ");
+        int roomID = scanner.nextInt();
+        scanner.nextLine(); //Consume newline character
+
+        String query = "DELETE FROM tbl_rooms WHERE RoomID = ?";
+        try {
+            connect();
+            prep = con.prepareStatement(query);
+            prep.setInt(1, roomID);
+
+            int rowsDeleted = prep.executeUpdate();
+            if (rowsDeleted > 0){
+                System.out.println("Remove room successful for RoomID: " + roomID);
+            } else {
+                System.out.println("RoomID: " + roomID + " not found.");
+            }
+
+            con.close();
+        } catch (SQLException e){
+            e.printStackTrace(); //prints stack trace for better diagnosis of error
+        }
+        displayRoomUsingInnerJoin();
+    }
+    
+    public void displayRegistrationUsingInnerJoin() {
+        String query = "SELECT * FROM tbl_customer "
+                + "INNER JOIN tbl_registration ON tbl_customer.CustomerID = tbl_registration.CustomerID "
+                + "INNER JOIN tbl_rooms ON tbl_registration.RoomID = tbl_rooms.RoomID";
+
+        try {
+            connect();
+            state = con.createStatement();
+            result = state.executeQuery(query);
+            
+            System.out.println("");
+            System.out.println("Registration ID\t\tCustomer ID\t\tRoom ID\t\tCheck-in Date\t\tPeriod of Stay\t\tCheck-out Date");
+            System.out.println("----------------------------------------------------------------------------------------------------------------------");
+            while (result.next()) {
+                int registrationId = result.getInt("RegistrationID");
+                int id = result.getInt("CustomerID");
+                int roomId = result.getInt("RoomID");
+                Date checkInDate = result.getDate("CheckInDate");
+                int periodOfStay = result.getInt("PeriodOfStay");
+                Date checkOutDate = result.getDate("CheckOutDate");
+                System.out.println(registrationId + "\t\t\t" + id + "\t\t\t" + roomId + "\t\t" + checkInDate + "\t\t" + periodOfStay + "\t\t\t" + checkOutDate);
+                System.out.println("");
+            }
+        } catch (SQLException e) {
+            System.out.println("Error retrieving registration data: " + e.getMessage());
+            System.out.println("");
+        }
+    }
+    
+    private void registerGuest() {
+        System.out.println(" ======================");
+        System.out.println("|    REGISTER GUEST     |");
+        System.out.println(" ======================");
+
+        try {
+            connect();
+
+            System.out.print("What's the customer's ID?: ");
+            int CustomerID = scanner.nextInt();
+
+            System.out.print("What's the room ID?: ");
+            int RoomID = scanner.nextInt();
+
+            scanner.nextLine(); // Consume newline character
+
+            // Get CheckInDate
+            System.out.print("Enter Check-In Date (YYYY-MM-DD): ");
+            String CheckInDateStr = scanner.nextLine();
+            java.sql.Date CheckInDate = java.sql.Date.valueOf(CheckInDateStr);
+
+            // Get PeriodOfStay
+            System.out.print("Enter Period of Stay (in days): ");
+            int PeriodOfStay = scanner.nextInt();
+            scanner.nextLine(); // Consume newline character
+
+            // Calculate CheckOutDate based on CheckInDate and PeriodOfStay
+            java.sql.Date CheckOutDate = calculateCheckOutDate(CheckInDate, PeriodOfStay);
+
+            // Prepare INSERT statement
+            String query = "INSERT INTO tbl_registration (CustomerID, RoomID, CheckInDate, PeriodOfStay, CheckOutDate) VALUES (?, ?, ?, ?, ?)";
+            prep = con.prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS);
+
+
+
+            // Insert into tbl_registration
+            prep.setInt(1, CustomerID);
+            prep.setInt(2, RoomID);
+            prep.setDate(3, CheckInDate);
+            prep.setInt(4, PeriodOfStay);
+            prep.setDate(5, CheckOutDate);
+
+            // Execute the INSERT statement
+            int rowsInserted = prep.executeUpdate();
+            if (rowsInserted > 0) {
+                System.out.println("Guest registration successful.");
+            } else {
+                System.out.println("Failed to register guest.");
+            }
+            con.close();
+        } catch (SQLException e) {
+            System.err.println("Error registering guest: " + e.getMessage());
+        }
+        displayRegistrationUsingInnerJoin();
+    }
+
+    private void unregisterGuest() {
+        System.out.print("Enter RegistrationID to unregister guest: ");
+        int registrationID = scanner.nextInt();
+        scanner.nextLine(); // Consume newline character
+
+        String query = "DELETE FROM tbl_registration WHERE RegistrationID = ?";
+        try {
+            connect();
+            prep = con.prepareStatement(query);
+            prep.setInt(1, registrationID);
+
+            int rowsDeleted = prep.executeUpdate();
+            if (rowsDeleted > 0){
+                System.out.println("Unregister guest successful for RegistrationID: " + registrationID);
+            } else {
+                System.out.println("RegistrationID: " + registrationID + " not found.");
+            }
+
+            con.close();
+        } catch (SQLException e){
+            e.printStackTrace(); //prints stack trace for better diagnosis of error
+        }
+        displayRegistrationUsingInnerJoin();
+    }
+    
 }
+    
     
