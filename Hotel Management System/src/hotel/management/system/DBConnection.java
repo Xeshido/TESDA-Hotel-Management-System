@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.sql.PreparedStatement;
 
 public abstract class DBConnection {
     
@@ -15,6 +16,7 @@ public abstract class DBConnection {
     public Connection con;
     public Statement state;
     public ResultSet result;
+    public PreparedStatement prep;
     
     public void connect() {
         try {
