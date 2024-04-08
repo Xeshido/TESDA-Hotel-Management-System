@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.1
+-- version 5.2.0
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 04, 2024 at 04:29 AM
--- Server version: 10.4.32-MariaDB
--- PHP Version: 8.0.30
+-- Generation Time: Apr 07, 2024 at 09:02 PM
+-- Server version: 10.4.24-MariaDB
+-- PHP Version: 8.1.6
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -33,18 +33,10 @@ CREATE TABLE `tbl_billings` (
   `BillType` varchar(30) NOT NULL,
   `BillDate` date NOT NULL,
   `BillAmount` varchar(30) NOT NULL,
-  `PaymentDate` date NOT NULL,
+  `PaymentDate` date DEFAULT NULL,
   `PaymentStatus` varchar(30) NOT NULL,
-  `PaymentMethod` varchar(30) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `tbl_billings`
---
-
-INSERT INTO `tbl_billings` (`BillID`, `RegistrationID`, `BillType`, `BillDate`, `BillAmount`, `PaymentDate`, `PaymentStatus`, `PaymentMethod`) VALUES
-(1, 1, 'Peso', '2024-03-27', 'PHP 2,000', '2024-03-27', 'Paid', 'Cash'),
-(2, 3, 'Dollar', '2024-04-10', 'PHP 1,000', '2024-04-10', 'Paid', 'G-Cash');
+  `PaymentMethod` varchar(30) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -58,15 +50,7 @@ CREATE TABLE `tbl_customer` (
   `CellNum` varchar(12) NOT NULL,
   `Email` varchar(30) NOT NULL,
   `Age` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `tbl_customer`
---
-
-INSERT INTO `tbl_customer` (`CustomerID`, `CustomerName`, `CellNum`, `Email`, `Age`) VALUES
-(1, 'Kurt Lopez', '09557856198', 'sellabsu9@gmail.com', 19),
-(2, 'Dominic Aldas', '0985697856', 'dominic@gmail.com', 19);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -81,15 +65,7 @@ CREATE TABLE `tbl_registration` (
   `CheckInDate` date NOT NULL,
   `PeriodOfStay` varchar(30) NOT NULL,
   `CheckOutDate` date NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `tbl_registration`
---
-
-INSERT INTO `tbl_registration` (`RegistrationID`, `CustomerID`, `RoomID`, `CheckInDate`, `PeriodOfStay`, `CheckOutDate`) VALUES
-(1, 1, 1, '2024-03-28', '2 Days', '2024-03-29'),
-(3, 2, 2, '2024-04-10', '3 Days', '2024-04-13');
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -99,19 +75,20 @@ INSERT INTO `tbl_registration` (`RegistrationID`, `CustomerID`, `RoomID`, `Check
 
 CREATE TABLE `tbl_roomprice` (
   `RoomType` varchar(30) NOT NULL,
-  `RoomPrice` varchar(30) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `RoomPrice` int(30) NOT NULL,
+  `RoomDescription` varchar(30) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `tbl_roomprice`
 --
 
-INSERT INTO `tbl_roomprice` (`RoomType`, `RoomPrice`) VALUES
-('Deluxe', 'PHP 5,000'),
-('Economy', 'PHP 2,000'),
-('Executive', 'PHP 7,000'),
-('Standard', 'PHP 3,000'),
-('Suite', 'PHP 10,000');
+INSERT INTO `tbl_roomprice` (`RoomType`, `RoomPrice`, `RoomDescription`) VALUES
+('Deluxe', 5000, 'Level 1 Luxury'),
+('Economy', 2000, 'Entry-Level'),
+('Executive', 7000, 'Level 2 Luxury'),
+('Standard', 3000, 'Comfort'),
+('Suite', 10000, 'Level 3 Luxury');
 
 -- --------------------------------------------------------
 
@@ -123,16 +100,8 @@ CREATE TABLE `tbl_rooms` (
   `RoomID` int(11) NOT NULL,
   `RoomType` varchar(30) NOT NULL,
   `RoomStatus` varchar(25) NOT NULL,
-  `RoomDescription` varchar(30) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `tbl_rooms`
---
-
-INSERT INTO `tbl_rooms` (`RoomID`, `RoomType`, `RoomStatus`, `RoomDescription`) VALUES
-(1, 'Standard', 'Single EME', 'wala lang'),
-(2, 'Economy', 'Available', 'Okay lang');
+  `ServiceID` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- --------------------------------------------------------
 
@@ -142,8 +111,19 @@ INSERT INTO `tbl_rooms` (`RoomID`, `RoomType`, `RoomStatus`, `RoomDescription`) 
 
 CREATE TABLE `tbl_serviceprice` (
   `ServiceType` varchar(30) NOT NULL,
-  `ServicePrice` varchar(30) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `ServicePrice` int(30) NOT NULL,
+  `ServiceDescription` varchar(30) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `tbl_serviceprice`
+--
+
+INSERT INTO `tbl_serviceprice` (`ServiceType`, `ServicePrice`, `ServiceDescription`) VALUES
+('Dining', 700, 'BLD Service'),
+('Housekeeping', 300, 'Room Maintenance'),
+('Laundry', 200, 'Laundry Services'),
+('Massage & Spa', 500, 'It is what it is');
 
 -- --------------------------------------------------------
 
@@ -153,9 +133,8 @@ CREATE TABLE `tbl_serviceprice` (
 
 CREATE TABLE `tbl_services` (
   `ServiceID` int(11) NOT NULL,
-  `ServiceType` varchar(30) NOT NULL,
-  `ServiceDescription` varchar(30) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+  `ServiceType` varchar(30) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Indexes for dumped tables
@@ -193,7 +172,8 @@ ALTER TABLE `tbl_roomprice`
 --
 ALTER TABLE `tbl_rooms`
   ADD PRIMARY KEY (`RoomID`),
-  ADD KEY `Rooms_RoomsType` (`RoomType`);
+  ADD KEY `Rooms_RoomsType` (`RoomType`),
+  ADD KEY `Service_ServiceID` (`ServiceID`);
 
 --
 -- Indexes for table `tbl_serviceprice`
@@ -216,31 +196,31 @@ ALTER TABLE `tbl_services`
 -- AUTO_INCREMENT for table `tbl_billings`
 --
 ALTER TABLE `tbl_billings`
-  MODIFY `BillID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `BillID` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `tbl_customer`
 --
 ALTER TABLE `tbl_customer`
-  MODIFY `CustomerID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `CustomerID` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `tbl_registration`
 --
 ALTER TABLE `tbl_registration`
-  MODIFY `RegistrationID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `RegistrationID` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `tbl_rooms`
 --
 ALTER TABLE `tbl_rooms`
-  MODIFY `RoomID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `RoomID` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `tbl_services`
 --
 ALTER TABLE `tbl_services`
-  MODIFY `ServiceID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `ServiceID` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- Constraints for dumped tables
@@ -257,13 +237,14 @@ ALTER TABLE `tbl_billings`
 --
 ALTER TABLE `tbl_registration`
   ADD CONSTRAINT `Customer_CustomerID` FOREIGN KEY (`CustomerID`) REFERENCES `tbl_customer` (`CustomerID`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `Room_RoomID` FOREIGN KEY (`RoomID`) REFERENCES `tbl_rooms` (`RoomID`);
+  ADD CONSTRAINT `Room_RoomID` FOREIGN KEY (`RoomID`) REFERENCES `tbl_rooms` (`RoomID`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `tbl_rooms`
 --
 ALTER TABLE `tbl_rooms`
-  ADD CONSTRAINT `Rooms_RoomsType` FOREIGN KEY (`RoomType`) REFERENCES `tbl_roomprice` (`RoomType`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `Rooms_RoomsType` FOREIGN KEY (`RoomType`) REFERENCES `tbl_roomprice` (`RoomType`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `Service_ServiceID` FOREIGN KEY (`ServiceID`) REFERENCES `tbl_services` (`ServiceID`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `tbl_services`
